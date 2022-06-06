@@ -33,6 +33,10 @@ public class Bullet {
 
     // 渲染子弹
     public void DrawBullet(Graphics g, JPanel i) {
+        // 打中了敌人，不需要渲染
+        if(!mFacus){
+            return;
+        }
         g.drawImage(pic[mPlayID++], m_posX, m_posY, (ImageObserver) i);
         if (mPlayID == 4) mPlayID = 0;
     }

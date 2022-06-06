@@ -1,13 +1,13 @@
 package UI;
 
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 
-public class Nav extends JMenuBar  {
+public class Nav extends JMenuBar {
     public static JMenu ranking; // 排行榜
     public static JMenu repeat; // 重玩
-    public Nav(){
+
+    public Nav() {
         ranking = new JMenu("排行榜");
         repeat = new JMenu("重玩");
 
@@ -21,5 +21,6 @@ public class Nav extends JMenuBar  {
                 super.mouseClicked(e);
             }
         });
+
     }
 }
