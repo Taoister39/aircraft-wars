@@ -17,6 +17,8 @@ public class Login {
     private JButton okBtn = new JButton("确定");
     private JButton registerBtn = new JButton("注册");
     public Box loginBox = null;
+    public static String password;
+    public static String username;
 
     public Login() {
 
@@ -43,8 +45,10 @@ public class Login {
         this.okBtn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                password = passwordField.getText();
+                username = usernameField.getText();
                 // 是否登入成功
-                Boolean state = LoginData.loginSuccessful(usernameField.getText(), passwordField.getText());
+                Boolean state = LoginData.loginSuccessful(username, password);
                 planeFrame.mStartState = state;
                 planeFrame.renderGameState(); // 更新组件（进入游戏界面）
                 super.mouseClicked(e);

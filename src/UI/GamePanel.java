@@ -1,6 +1,6 @@
 package UI;
 
-import UI.Enemy;
+import DB.ScoreData;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -8,13 +8,10 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
-import java.io.IOException;
 import java.util.Date;
 import java.util.Random;
 
-import javax.imageio.ImageIO;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 //import bean.Bullet;
 //import bean.Enemy;
@@ -23,7 +20,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     private int mScreenWidth = 320; // 窗口宽度
     private int mScreenHeight = 480; // 窗口高度
-    private static final int STATE_GAME = 0;
+    private static final int STATE_GAME = 0; // 游戏正常
+    private static final int GAME_OVER = 1;
     private int mState = STATE_GAME; // 当前游戏状态
     private Image mBitMenuBG0 = null; // 上背景
     private Image mBitMenuBG1 = null; // 下背景
@@ -67,7 +65,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 renderBg();
                 updateBg();
                 break;
+            case GAME_OVER:
+                showGameOver();
+                setGameState(-1);
+                break;
         }
+        if(lifeCount < 0 && mState == STATE_GAME){
+            setGameState(GAME_OVER);
+        }
+    }
+    private void showGameOver(){
+        ScoreData.appendToScore(Login.username,Login.password,score,new Date().getTime() - firstGameStart);
+        JOptionPane.showMessageDialog(null, "游戏结束", "失败 ", 0);
+
     }
 
     // 配置
@@ -124,9 +134,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         for (int i = 0; i < ENEMY_POOL_COUNT; i++)
             mEnemy[i].DrawEnemy(g, this);
 
-        g.drawString("生命: " + lifeCount,0,390);
-        g.drawString("分数: " + score,0,410);
-        g.drawString("时间: " +(new Date().getTime() - firstGameStart),0,430);
+        g.drawString("生命: " + lifeCount, 0, 390);
+        g.drawString("分数: " + score, 0, 410);
+        g.drawString("时间: " + (new Date().getTime() - firstGameStart), 0, 430);
     }
 
     // 更新背景图片
@@ -167,7 +177,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         Collision();
     }
 
+    // 碰撞
     public void Collision() {
+        // 当子弹打中敌人时
         for (int i = 0; i < BULLET_POOL_COUNT; i++) {
             for (int j = 0; j < ENEMY_POOL_COUNT; j++) {
                 if (mBuilet[i].mFacus && mBuilet[i].m_posX >= mEnemy[j].m_posX - 30
@@ -179,6 +191,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                     mBuilet[i].mFacus = false; // 子弹打中敌人消失
                     score++;
                 }
+            }
+        }
+        // 当飞机撞到敌人时
+        for (int i = 0; i < ENEMY_POOL_COUNT; i++) {
+            if (mEnemy[i].m_posX >= mAirPosX - 10
+                    && mEnemy[i].m_posX <= mAirPosX + 10
+                    && mEnemy[i].m_posY + 35 == mAirPosY) {
+                JOptionPane.showMessageDialog(null, "你损失了一条命", "不好 ", 0);
+                lifeCount--;
             }
         }
     }

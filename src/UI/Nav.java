@@ -1,5 +1,7 @@
 package UI;
 
+import DB.ScoreData;
+
 import javax.swing.*;
 import java.awt.event.*;
 
@@ -21,6 +23,12 @@ public class Nav extends JMenuBar {
                 super.mouseClicked(e);
             }
         });
-
+        ranking.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                new ScoreFrame();
+                super.mouseClicked(e);
+            }
+        });
     }
 }

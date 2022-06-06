@@ -2,16 +2,7 @@ package DB;
 
 import java.sql.*;
 // 数据库API
-public class LoginData {
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver"; // JDBC驱动名
-    static final String DB_URL = "jdbc:mysql://localhost:3306/test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"; // 数据库URL
-
-    static final String USER = "root";
-    static final String PASS = "liutianhua";
-    /* 复用 */
-    public static Connection connection = null;
-    public static Statement statement = null;
-    public static ResultSet result = null;
+public class LoginData extends  DataBaseInformation{
     // 用户名是否被使用了
     public static boolean isLogin(String username) {
         try {
