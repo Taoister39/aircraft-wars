@@ -10,13 +10,12 @@ public class ScoreFrame extends JFrame {
 
     ScoreFrame() {
         this.setBounds(0, 100, 600, 300);
-        container = new JPanel();
 
         this.setVisible(true);
 
         String[][] result = ScoreData.ResultQueryAll();
-
-        container.setLayout(new GridLayout(10, 4,10,5));
+        // 查询有多少行，再加上标题一行
+        container = new JPanel(new GridLayout(ScoreData.resultCount + 1,result[0].length,10,5));
         this.add(container,BorderLayout.CENTER);
 
         container.add(new JLabel("用户名"));
@@ -24,12 +23,8 @@ public class ScoreFrame extends JFrame {
         container.add(new JLabel("分数"));
         container.add(new JLabel("时间"));
 
-        for(int i = 0;i < result.length;i++){
+        for(int i = 0;i < ScoreData.resultCount;i++){
             for(int j = 0;j < result[0].length;j++){
-//                System.out.println(result[i][j]);
-                if(result[i][j] == null){
-                    break;
-                }
                 container.add(new JLabel(result[i][j]));
             }
         }

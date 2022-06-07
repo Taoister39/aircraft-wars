@@ -1,10 +1,8 @@
 package UI;
 
-import DB.ScoreData;
-
 import javax.swing.*;
 import java.awt.event.*;
-
+// 导航栏
 public class Nav extends JMenuBar {
     public static JMenu ranking; // 排行榜
     public static JMenu repeat; // 重玩
@@ -19,7 +17,7 @@ public class Nav extends JMenuBar {
         repeat.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                planeFrame.repeatGame();
+                PlaneFrame.repeatGame();
                 super.mouseClicked(e);
             }
         });

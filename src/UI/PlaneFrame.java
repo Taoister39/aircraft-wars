@@ -1,11 +1,10 @@
 package UI;
 
 import java.awt.*;
-//import java.sql.SQLException;
-//import java.time.LocalDate;
+import java.util.Date;
 import javax.swing.*;
 
-public class planeFrame extends JFrame {
+public class PlaneFrame extends JFrame {
     public static Boolean mStartState = false;
     public static Container contentPane = null;
 
@@ -21,7 +20,14 @@ public class planeFrame extends JFrame {
     }
     // 重新开始游戏
     public static void repeatGame() {
+        GamePanel.mIsRunning = false;
+        if(GamePanel.mThread != null) {
+            GamePanel.mThread.stop();
+            GamePanel.mState = 1;
+        }
         GamePanel panel = new GamePanel();
+        GamePanel.firstGameStart = new Date().getTime();
+        GamePanel.score = 0;
         contentPane.removeAll(); // 移除所有子组件
         contentPane.repaint();
         contentPane.add(panel);
@@ -40,7 +46,7 @@ public class planeFrame extends JFrame {
         }
     }
 
-    public planeFrame() {
+    public PlaneFrame() {
 
         setTitle("飞行射击类游戏");
 
@@ -52,12 +58,13 @@ public class planeFrame extends JFrame {
     public static void main(String[] args) {
         Login login = new Login(); // 注册页面
 
-        planeFrame e1 = new planeFrame();
-        contentPane.add(login.loginBox);
+        PlaneFrame e1 = new PlaneFrame();
+        contentPane.add(login.loginBox,BorderLayout.CENTER);
 
         e1.setSize(320, 500); // 固定高宽
 
         e1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        e1.setResizable(false);
 
         e1.setVisible(true);
     }

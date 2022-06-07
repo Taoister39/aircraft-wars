@@ -3,7 +3,7 @@ package UI;
 import DB.LoginData;
 
 import javax.swing.*;
-import javax.swing.plaf.BorderUIResource;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -38,6 +38,9 @@ public class Login {
 
         //箱式布局装入三个面板
         this.loginBox = Box.createVerticalBox();
+        this.loginBox.setAlignmentY(Component.CENTER_ALIGNMENT);
+        this.loginBox.setAlignmentX(Component.CENTER_ALIGNMENT);
+        this.loginBox.setBorder(new EmptyBorder(100,0,100,0));
         this.loginBox.add(panel01);
         this.loginBox.add(panel02);
         this.loginBox.add(panel03);
@@ -49,8 +52,8 @@ public class Login {
                 username = usernameField.getText();
                 // 是否登入成功
                 Boolean state = LoginData.loginSuccessful(username, password);
-                planeFrame.mStartState = state;
-                planeFrame.renderGameState(); // 更新组件（进入游戏界面）
+                PlaneFrame.mStartState = state;
+                PlaneFrame.renderGameState(); // 更新组件（进入游戏界面）
                 super.mouseClicked(e);
             }
         });
@@ -58,7 +61,7 @@ public class Login {
             @Override
             public void mouseClicked(MouseEvent e) {
                 Boolean state = LoginData.registeredUser(usernameField.getText(), passwordField.getText());
-                planeFrame.renderRegister(state);
+                PlaneFrame.renderRegister(state);
                 super.mouseClicked(e);
             }
         });

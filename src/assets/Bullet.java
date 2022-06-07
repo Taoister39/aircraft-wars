@@ -1,19 +1,16 @@
-package UI;
+package assets;
 
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.image.ImageObserver;
+import java.awt.*;
 import javax.swing.JPanel;
 
 //子弹类
 public class Bullet {
     //    static final int BULLET_STEP_X = 3;
 //    static final int BULLET_WIDTH = 40;
-    static final int BULLET_STEP_Y = 15; // 子弹在Y轴速度
+    public int BULLET_STEP_Y = 15; // 子弹在Y轴速度
     public int m_posX = 0; // 子弹X坐标
     public int m_posY = 0; // 子弹Y坐标
-    boolean mFacus = true; // 被发出
+    public boolean mFacus; // 消失状态
     private Image pic[] = null; // 状态（图片）数据
     private int mPlayID = 0; // 当前状态
 
@@ -28,25 +25,24 @@ public class Bullet {
     public void init(int x, int y) {
         m_posX = x;
         m_posY = y;
-        mFacus = true; // 默认发射成功
+        mFacus = true; // 默认发射
     }
 
     // 渲染子弹
     public void DrawBullet(Graphics g, JPanel i) {
-        // 打中了敌人，不需要渲染
+        // 如果打中了敌人，不需要渲染
         if(!mFacus){
             return;
         }
-        g.drawImage(pic[mPlayID++], m_posX, m_posY, (ImageObserver) i);
+        g.drawImage(pic[mPlayID++], m_posX, m_posY, i);
         if (mPlayID == 4) mPlayID = 0;
     }
 
     // 更新子弹数据
-    public void UpdateBullet() {
+    public void updateBullet() {
         if (mFacus) {
             m_posY -= BULLET_STEP_Y; // 子弹向上移动
         }
-
     }
 
 }
