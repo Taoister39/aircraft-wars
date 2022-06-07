@@ -11,7 +11,8 @@ public class ScoreData extends DataBaseInformation {
     public static String[][] ResultQueryAll() {
         String queryArray[][] = new String[MAX_QUERY_ROWS][MAX_QUERY_COLS];
         int index = 0;
-        String sql = "SELECT username,password,score,game_time FROM login ORDER BY score DESC";
+        String sql = "SELECT username,password,score,game_time FROM "+
+                DataBaseInformation.connectionTableName +" ORDER BY score DESC";
         try {
             Class.forName(JDBC_DRIVER);
             connection = DriverManager.getConnection(DB_URL, USER, PASS); // 连结对象
@@ -37,7 +38,8 @@ public class ScoreData extends DataBaseInformation {
 
     public static void appendToScore(String username, String password, int socre, Long game_time) {
 
-        String sql = "UPDATE login SET score = " + socre + ",game_time = " + game_time + " WHERE username = '" +
+        String sql = "UPDATE "+ DataBaseInformation.connectionTableName +
+                " SET score = " + socre + ",game_time = " + game_time + " WHERE username = '" +
                 username + "' AND password = '" + password + "'";
 //        System.out.println(sql);
         try {
