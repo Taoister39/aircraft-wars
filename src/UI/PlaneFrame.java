@@ -18,7 +18,12 @@ public class PlaneFrame extends JFrame {
             repeatGame(); // 复用重复开始
         }
     }
-    // 重新开始游戏
+    /*
+    * 重新开始游戏（有问题）
+    * 2022-6-7
+    * Qiacrkeng-Taoer
+    * 杀掉线程也依然存在，当前线程的键盘事件监听器无法使用
+    * */
     public static void repeatGame() {
         GamePanel.mIsRunning = false;
         if(GamePanel.mThread != null) {

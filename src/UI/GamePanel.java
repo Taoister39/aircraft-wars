@@ -35,9 +35,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private Image mBitMenuBG1 = null; // 下背景
     private int mBitposY0 = 0; // 上背景坐标
     private int mBitposY1 = 0; // 下背景坐标
-    final static int BULLET_POOL_COUNT = 15; // 生成子弹数量
-    final static int ENEMY_POOL_COUNT = 10; // 生成小飞机敌人数量
-    final static int ENEMY_POS_OFF = 65; // 初次间隔
+    final static int BULLET_POOL_COUNT = 55; // 生成子弹数量
+    final static int ENEMY_POOL_COUNT = 20; // 生成小飞机敌人数量
+    final static int ENEMY_POS_OFF = 35; // 初次间隔
+    private static final int BIG_ENEMY_POS_OFF = 100;
     public static Thread mThread = null; // 线程
     public static boolean mIsRunning = false; // 线程运行状态
     Enemy mEnemy[] = null; // 一组敌人
@@ -48,7 +49,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     public static int score; // 分数统计
     public static long firstGameStart; // 开始时间
     BigEnemy mBigEnemy[] = null; // 大敌机
-    final static int BIG_ENEMY_POOL_COUNT = 2; // 大敌机数量
+    final static int BIG_ENEMY_POOL_COUNT = 3; // 大敌机数量
     AudioClip attack = null; // 攻击声音
     AudioClip collision = null; // 碰撞声音
 
@@ -71,7 +72,16 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+
+//        updateBigEnemySize();
     }
+
+//    private static void updateBigEnemySize() {
+//        Image pic = Toolkit.getDefaultToolkit().getImage("images/e1_0.png");
+//        BigEnemy.bigEnemyWidth = pic.getWidth(null) * 4;
+//        BigEnemy.bigEnemyHeight = pic.getHeight(null) * 4;
+//        System.out.println(BigEnemy.bigEnemyWidth+ " " + BigEnemy.bigEnemyHeight);
+//    }
 
     // 游戏没有结束就继续画
     protected void Draw() {
@@ -93,6 +103,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private void showGameOver() {
         ScoreData.appendToScore(Login.username, Login.password, score, new Date().getTime() - firstGameStart);
         JOptionPane.showMessageDialog(null, "游戏结束", "失败 ", 0);
+        attack.play();
     }
 
     // 配置
@@ -111,7 +122,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         for (int i = 0; i < BIG_ENEMY_POOL_COUNT; i++) {
             mBigEnemy[i] = new BigEnemy();
             mBigEnemy[i].init(i * ENEMY_POS_OFF, i * ENEMY_POS_OFF - 170);
-            mBigEnemy[i].bullet.init(mBigEnemy[i].m_posX + 5, mBigEnemy[i].m_posY + 40);
+            mBigEnemy[i].bullet.init(mBigEnemy[i].m_posX + 75, mBigEnemy[i].m_posY + 100);
         }
 
         mEnemy = new Enemy[ENEMY_POOL_COUNT]; // 五个敌人
@@ -124,7 +135,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         mBuilet = new Bullet[BULLET_POOL_COUNT]; // 15个子弹
         for (int i = 0; i < BULLET_POOL_COUNT; i++) {
-            mBuilet[i] = new Bullet();
+            mBuilet[i] = new Bullet("images\\bullet_", "");
         }
         mSendTime = System.currentTimeMillis(); // 当前时间为发射时间
     }
@@ -150,7 +161,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         // 绘制子弹
         for (int i = 0; i < BULLET_POOL_COUNT; i++)
             mBuilet[i].DrawBullet(g, this);
-        // 绘制敌人
+        // 绘制敌人及子弹
         for (int i = 0; i < ENEMY_POOL_COUNT; i++) {
             mEnemy[i].DrawEnemy(g, this);
             mEnemy[i].bullet.DrawBullet(g, this);
@@ -177,9 +188,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         if (mBitposY1 == mScreenHeight) {
             mBitposY1 = -mScreenHeight;
         }
+        // 更新战机子弹
         for (int i = 0; i < BULLET_POOL_COUNT; i++) {
             mBuilet[i].updateBullet();
         }
+        // 更新小敌机位置及子弹
         for (int i = 0; i < ENEMY_POOL_COUNT; i++) {
             mEnemy[i].UpdateEnemy();
             mEnemy[i].bullet.updateBullet();
@@ -203,8 +216,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                     && mBigEnemy[i].mPlayID == 6
                     || mBigEnemy[i].m_posY >= mScreenHeight) {
                 // 敌人战机随机出现
-                mBigEnemy[i].init(UtilRandom(0, BIG_ENEMY_POOL_COUNT) * ENEMY_POS_OFF, -150);
-                mBigEnemy[i].bullet.init(mBigEnemy[i].m_posX - 5, mBigEnemy[i].m_posY + 40);
+                mBigEnemy[i].init(UtilRandom(0, BIG_ENEMY_POOL_COUNT) * BIG_ENEMY_POS_OFF, -150);
+                mBigEnemy[i].bullet.init(mBigEnemy[i].m_posX + 75, mBigEnemy[i].m_posY + 100);
             }
         }
 
@@ -223,7 +236,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         // 当子弹打中敌人时
         for (int i = 0; i < BULLET_POOL_COUNT; i++) {
             for (int j = 0; j < ENEMY_POOL_COUNT; j++) {
-                if (mBuilet[i].mFacus && mBuilet[i].m_posX >= mEnemy[j].m_posX - 30
+                if (mBuilet[i].mFacus && mEnemy[j].mAnimState == Enemy.ENEMY_ALIVE_STATE
+                        && mBuilet[i].m_posX >= mEnemy[j].m_posX - 30
                         && mBuilet[i].m_posX <= mEnemy[j].m_posX + 30
                         && mBuilet[i].m_posY >= mEnemy[j].m_posY
                         && mBuilet[i].m_posY <= mEnemy[j].m_posY + 50
@@ -236,7 +250,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             }
             // 打中大敌机
             for (int j = 0; j < BIG_ENEMY_POOL_COUNT; j++) {
-                if (mBuilet[i].mFacus && mBuilet[i].m_posX >= mBigEnemy[j].m_posX - 300
+                if (mBuilet[i].mFacus && mBigEnemy[j].mAnimState == BigEnemy.ENEMY_ALIVE_STATE
+                        && mBuilet[i].m_posX >= mBigEnemy[j].m_posX - 300
                         && mBuilet[i].m_posX <= mBigEnemy[j].m_posX + 300
                         && mBuilet[i].m_posY >= mBigEnemy[j].m_posY
                         && mBuilet[i].m_posY <= mBigEnemy[j].m_posY + 150) {
@@ -257,22 +272,29 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         bumpIntoTheEnemy(nowTime);
         meWasHit(nowTime);
     }
+
     // 飞机被敌机打中
-    public void meWasHit(long nowTime){
-        for(int i = 0;i < ENEMY_POOL_COUNT;i++){
-            if(mAircraf.mAirPosX >= mEnemy[i].bullet.m_posX - 30
+    public void meWasHit(long nowTime) {
+        for (int i = 0; i < ENEMY_POOL_COUNT; i++) {
+//            if(mBuilet[mSendId - 1].m_posX >= mEnemy[i].bullet.m_posX - 30
+//                    && mBuilet[mSendId - 1].m_posX <= mEnemy[i].bullet.m_posX + 30
+//                    && mBuilet[mSendId - 1].m_posY == mEnemy[i].bullet.m_posY){
+//                mEnemy[i].bullet.init(mEnemy[i].m_posX + 5, mEnemy[i].m_posY + 40);
+//                break;
+//            }
+            if (mAircraf.mAirPosX >= mEnemy[i].bullet.m_posX - 30
                     && mAircraf.mAirPosX <= mEnemy[i].bullet.m_posX + 30
-                    && mAircraf.mAirPosY == mEnemy[i].bullet.m_posY){
+                    && mAircraf.mAirPosY == mEnemy[i].bullet.m_posY) {
                 mAircraf.inHurt(nowTime);
-                mEnemy[i].bullet.init(mEnemy[i].m_posX + 5,mEnemy[i].m_posY + 40);
+                mEnemy[i].bullet.init(mEnemy[i].m_posX + 5, mEnemy[i].m_posY + 40);
             }
         }
-        for(int i = 0;i < BIG_ENEMY_POOL_COUNT;i++){
-            if(mAircraf.mAirPosX >= mBigEnemy[i].bullet.m_posX - 30
-                    && mAircraf.mAirPosX <= mBigEnemy[i].bullet.m_posX + 30
-                    && mAircraf.mAirPosY == mBigEnemy[i].bullet.m_posY){
+        for (int i = 0; i < BIG_ENEMY_POOL_COUNT; i++) {
+            if (mAircraf.mAirPosX >= mBigEnemy[i].bullet.m_posX - 70
+                    && mAircraf.mAirPosX <= mBigEnemy[i].bullet.m_posX + 70
+                    && mAircraf.mAirPosY == mBigEnemy[i].bullet.m_posY) {
                 mAircraf.inHurt(nowTime);
-                mBigEnemy[i].bullet.init(mBigEnemy[i].m_posX + 5,mBigEnemy[i].m_posY + 40);
+                mBigEnemy[i].bullet.init(mBigEnemy[i].m_posX + 75, mBigEnemy[i].m_posY + 100);
             }
         }
     }

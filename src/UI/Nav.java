@@ -24,7 +24,7 @@ public class Nav extends JMenuBar {
         ranking.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                new ScoreFrame();
+                new ScoreFrame(); // 单独作为窗口
                 super.mouseClicked(e);
             }
         });

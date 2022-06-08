@@ -23,6 +23,7 @@ public class Enemy {
     private Image enemyExplorePic[] = new Image[6]; // 敌人被打中时的状态（图片）
     public int mPlayID = 0;
     public Bullet bullet = null;
+    public int bulletSpeed = 20; // 子弹速度
 
     public Enemy() {
         for (int i = 0; i < 6; i++)
@@ -36,8 +37,8 @@ public class Enemy {
         m_posY = y;
         mAnimState = ENEMY_ALIVE_STATE;
         mPlayID = 0;
-        bullet = new Bullet();
-        bullet.BULLET_STEP_Y = -15;
+        bullet = new Bullet("images\\bullet_","_enemy");
+        bullet.BULLET_STEP_Y = -bulletSpeed;
     }
     // 渲染敌人
     public void DrawEnemy(Graphics g, JPanel i) {

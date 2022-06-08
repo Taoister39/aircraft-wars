@@ -13,12 +13,12 @@ public class Bullet {
     public boolean mFacus; // 消失状态
     private Image pic[] = null; // 状态（图片）数据
     private int mPlayID = 0; // 当前状态
+    public int scale = 1; // 放大倍数
 
-    public Bullet() {
+    public Bullet(String iconPrevURL, String iconAfterURL) { // 前缀与后缀路径
         pic = new Image[4];
         for (int i = 0; i < 4; i++)  // 只有四个状态
-            pic[i] = Toolkit.getDefaultToolkit().getImage(
-                    "images\\bullet_" + i + ".png");
+            pic[i] = Toolkit.getDefaultToolkit().getImage(iconPrevURL + i + iconAfterURL + ".png");
     }
 
     // 初始化
@@ -31,10 +31,13 @@ public class Bullet {
     // 渲染子弹
     public void DrawBullet(Graphics g, JPanel i) {
         // 如果打中了敌人，不需要渲染
-        if(!mFacus){
+        if (!mFacus) {
             return;
         }
-        g.drawImage(pic[mPlayID++], m_posX, m_posY, i);
+        int bulletWidth = pic[mPlayID].getWidth(null);
+        int bulletHeight = pic[mPlayID].getHeight(null);
+
+        g.drawImage(pic[mPlayID++], m_posX, m_posY,bulletWidth * scale,bulletHeight * scale, i);
         if (mPlayID == 4) mPlayID = 0;
     }
 
